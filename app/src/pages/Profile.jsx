@@ -113,7 +113,16 @@ export default function Profile() {
       )}
 
       <div className="pt-2">
-        <button className={`w-full py-3.5 rounded-2xl font-medium text-red-400 ${darkMode ? 'bg-red-500/10' : 'bg-red-50'} active:scale-[0.97] transition-transform`}>
+        <button
+          onClick={() => {
+            if (window.confirm('Sign out and clear all data? This cannot be undone.')) {
+              localStorage.removeItem('vitalflow-v2-storage');
+              localStorage.removeItem('vitalflow-v2-onboarded');
+              window.location.reload();
+            }
+          }}
+          className={`w-full py-3.5 rounded-2xl font-medium text-red-400 ${darkMode ? 'bg-red-500/10' : 'bg-red-50'} active:scale-[0.97] transition-transform`}
+        >
           Sign Out
         </button>
       </div>
