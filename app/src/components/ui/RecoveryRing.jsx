@@ -1,16 +1,16 @@
 import { motion } from 'framer-motion';
 
-export default function WellnessRing({ score, size = 160 }) {
-  const radius = (size - 16) / 2;
+const statusColors = {
+  green: { stroke: '#34d399', glow: 'rgba(16, 185, 129, 0.4)' },
+  yellow: { stroke: '#fbbf24', glow: 'rgba(245, 158, 11, 0.4)' },
+  red: { stroke: '#f87171', glow: 'rgba(239, 68, 68, 0.4)' },
+};
+
+export default function RecoveryRing({ score, status = 'green', size = 120 }) {
+  const radius = (size - 12) / 2;
   const circumference = 2 * Math.PI * radius;
   const progress = (score / 100) * circumference;
-
-  const getColor = (score) => {
-    if (score >= 80) return '#75856a';
-    if (score >= 60) return '#0ea5e9';
-    if (score >= 40) return '#f8b386';
-    return '#f16d30';
-  };
+  const colors = statusColors[status];
 
   return (
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
@@ -21,34 +21,33 @@ export default function WellnessRing({ score, size = 160 }) {
           r={radius}
           fill="none"
           stroke="currentColor"
-          strokeWidth="10"
-          className="text-gray-200 dark:text-navy-800"
-          opacity="0.3"
+          strokeWidth="8"
+          className="text-white/5"
         />
         <motion.circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke={getColor(score)}
-          strokeWidth="10"
+          stroke={colors.stroke}
+          strokeWidth="8"
           strokeLinecap="round"
           strokeDasharray={circumference}
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset: circumference - progress }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
+          transition={{ duration: 1.5, ease: [0.4, 0, 0.2, 1] }}
+          style={{ filter: `drop-shadow(0 0 6px ${colors.glow})` }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <motion.span
-          className="text-3xl font-bold font-display"
+          className="text-2xl font-bold font-display"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0.5 }}
         >
-          {score}
+          {score}%
         </motion.span>
-        <span className="text-xs text-gray-500 uppercase tracking-wide">Wellness</span>
       </div>
     </div>
   );

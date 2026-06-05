@@ -1,31 +1,38 @@
-# VitalFlow — Health Tracking App
+# VitalFlow v2 — Next-Gen Health Intelligence
 
-A beautiful, intuitive health tracking app built with React, Tailwind CSS, and Framer Motion.
+A world-class health tracking app that combines the biometric depth of Whoop, the design polish of Apple Health, and AI-powered insights neither can match.
 
-## Features
+## What Makes This Different
 
-- **Wellness Dashboard** — At-a-glance daily wellness score with radial progress ring
-- **Quick Logging** — One-tap logging for sleep, activity, hydration, nutrition, mood, and body metrics
-- **Trend Analysis** — Interactive charts showing 7/14/30-day trends with area graphs
-- **Goals & Streaks** — Set health goals and track habit streaks with visual calendars
-- **Breathing Exercise** — Built-in box breathing (4-4-4-4) guided exercise
-- **Dark Mode** — Full dark mode support with navy-toned palette
-- **Data Export** — Export all health data as JSON
-- **Onboarding** — Beautiful first-time user experience with swipeable intro cards
-- **Offline-First** — All data persisted in localStorage
+- **Recovery Score** — Know exactly how ready your body is, powered by HRV, resting HR, sleep quality, and strain balance
+- **Strain Tracking** — Real-time daily strain gauge (0–21 scale) with workout breakdowns
+- **Sleep Stages** — Deep/REM/Light/Awake visualization with sleep debt tracking and consistency scoring
+- **Body Battery** — See your energy reserves deplete and recharge throughout the day
+- **AI Coach** — Correlation engine discovers patterns you'd never notice ("When you sleep 7.5+ hrs, recovery is 18% higher")
+- **Nutrition + Fasting** — Macro rings, meal cards, hydration tracking, and intermittent fasting timer
+- **Gamification** — Levels, XP, badges, streaks — your health journey made addictive in a good way
+- **Dead-Simple Navigation** — 6 tabs, zero friction, animated transitions, one-handed operation
 
 ## Tech Stack
 
-- **React 19** + Vite
-- **Tailwind CSS 4** (custom theme with sage/peach/sky/lavender palette)
-- **Zustand** (state management with persistence)
-- **Recharts** (data visualization)
-- **Framer Motion** (animations)
+- **React 19** + Vite 8
+- **Tailwind CSS 4** (custom design tokens — sage, peach, sky, lavender, emerald, navy)
+- **Zustand** with localStorage persistence
+- **Recharts** (data viz)
+- **Framer Motion** (spring animations, layout transitions)
 - **Lucide React** (icons)
 - **date-fns** (date utilities)
-- **React Router** (client-side routing)
 
-## Getting Started
+## Design Language
+
+- Glassmorphism cards with backdrop-blur
+- Glowing recovery/strain indicators
+- Dark-first palette (deep navy with jewel-tone accents)
+- Plus Jakarta Sans (display) + Inter (body)
+- Micro-animations on every interaction
+- Mobile-first, gesture-friendly
+
+## Running
 
 ```bash
 cd app
@@ -33,19 +40,8 @@ npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`.
+## Deploy
 
-## Build
+Push to `main` — GitHub Actions auto-deploys to GitHub Pages.
 
-```bash
-npm run build
-```
-
-Production assets are output to the `dist/` directory.
-
-## Design Principles
-
-- **Calm by default** — Soft gradients, generous whitespace, no visual noise
-- **Progressive disclosure** — Essential info first, details on tap
-- **Delight in details** — Spring animations, smooth transitions, haptic feedback patterns
-- **Accessibility** — Semantic HTML, clear contrast ratios, keyboard navigable
+Live at: `https://josephrosko-hub.github.io/vitalflow/`
