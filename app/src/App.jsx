@@ -1,47 +1,60 @@
 import { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useHealthStore } from './store/healthStore';
-import Layout from './components/Layout';
-import Onboarding from './components/Onboarding';
+import Navigation from './components/Navigation';
 import Dashboard from './pages/Dashboard';
-import LogEntry from './pages/LogEntry';
-import Trends from './pages/Trends';
-import Goals from './pages/Goals';
+import Sleep from './pages/Sleep';
+import Activity from './pages/Activity';
+import Nutrition from './pages/Nutrition';
+import Insights from './pages/Insights';
 import Profile from './pages/Profile';
+import Onboarding from './components/Onboarding';
+
+const pages = {
+  home: Dashboard,
+  sleep: Sleep,
+  activity: Activity,
+  nutrition: Nutrition,
+  insights: Insights,
+  profile: Profile,
+};
 
 function App() {
-  const darkMode = useHealthStore((state) => state.darkMode);
+  const { darkMode, activeTab } = useHealthStore();
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    const hasOnboarded = localStorage.getItem('vitalflow-onboarded');
-    if (!hasOnboarded) {
-      setShowOnboarding(true);
-    }
+    const hasOnboarded = localStorage.getItem('vitalflow-v2-onboarded');
+    if (!hasOnboarded) setShowOnboarding(true);
   }, []);
 
-  const completeOnboarding = () => {
-    localStorage.setItem('vitalflow-onboarded', 'true');
-    setShowOnboarding(false);
-  };
-
   if (showOnboarding) {
-    return <Onboarding onComplete={completeOnboarding} />;
+    return (
+      <Onboarding onComplete={() => {
+        localStorage.setItem('vitalflow-v2-onboarded', 'true');
+        setShowOnboarding(false);
+      }} />
+    );
   }
 
+  const ActivePage = pages[activeTab] || Dashboard;
+
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="log" element={<LogEntry />} />
-            <Route path="trends" element={<Trends />} />
-            <Route path="goals" element={<Goals />} />
-            <Route path="profile" element={<Profile />} />
-          </Route>
-        </Routes>
-      </Router>
+    <div className={`min-h-screen ${darkMode ? 'bg-navy-950 text-white' : 'bg-gray-50 text-gray-900'}`}>
+      <main className="pb-24 max-w-md mx-auto w-full">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ActivePage />
+          </motion.div>
+        </AnimatePresence>
+      </main>
+      <Navigation />
     </div>
   );
 }

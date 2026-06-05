@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Moon, Sun, Download, Shield, Bell, ChevronRight, Heart } from 'lucide-react';
+import { User, Moon, Sun, Download, Shield, Bell, ChevronRight, Heart, Zap, Trophy, Flame, LogOut } from 'lucide-react';
 import { useHealthStore } from '../store/healthStore';
 
 export default function Profile() {
-  const { profile, darkMode, toggleDarkMode, updateProfile, entries } = useHealthStore();
+  const { profile, darkMode, toggleDarkMode, updateProfile, entries, goals, badges } = useHealthStore();
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
 
@@ -19,7 +19,7 @@ export default function Profile() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'vitalflow-data.json';
+    a.download = 'vitalflow-export.json';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -27,155 +27,142 @@ export default function Profile() {
   const stats = {
     totalEntries: entries.length,
     daysTracked: new Set(entries.map((e) => e.date)).size,
-    categories: new Set(entries.map((e) => e.category)).size,
+    longestStreak: Math.max(...goals.map(g => g.streak), 0),
+    badgesEarned: badges.filter(b => b.earned).length,
   };
 
   return (
-    <div className="space-y-6">
+    <div className="px-5 pt-14 space-y-6">
       <div>
         <h1 className="text-2xl font-bold font-display">Profile</h1>
-        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-          Manage your account and preferences
-        </p>
       </div>
 
+      {/* Profile Card */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`p-6 rounded-2xl text-center ${
-          darkMode ? 'bg-navy-900 border border-navy-800' : 'bg-white border border-gray-100'
-        } shadow-sm`}
+        className={`p-6 rounded-3xl text-center ${darkMode ? 'glass' : 'glass-light'}`}
       >
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sage-300 to-sage-500 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3">
-          {profile.name[0]}
+        <div className="relative inline-block">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-sage-400 to-emerald-500 flex items-center justify-center text-white text-3xl font-bold shadow-xl">
+            {profile.name[0]}
+          </div>
+          <div className="absolute -bottom-1 -right-1 bg-navy-950 rounded-full p-1">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-sky-400 flex items-center justify-center text-xs font-bold text-navy-950">
+              {profile.level}
+            </div>
+          </div>
         </div>
-        <h2 className="text-xl font-bold font-display">{profile.name}</h2>
-        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-          {stats.daysTracked} days tracked
-        </p>
+        <h2 className="text-xl font-bold font-display mt-4">{profile.name}</h2>
+        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Level {profile.level} • {stats.daysTracked} days</p>
 
-        <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-navy-800">
-          <div>
-            <p className="text-lg font-bold font-display">{stats.totalEntries}</p>
-            <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Entries</p>
+        {/* XP Bar */}
+        <div className="mt-4 px-4">
+          <div className="flex justify-between mb-1">
+            <span className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Level {profile.level}</span>
+            <span className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Level {profile.level + 1}</span>
           </div>
-          <div>
-            <p className="text-lg font-bold font-display">{stats.daysTracked}</p>
-            <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Days</p>
+          <div className={`h-2.5 rounded-full overflow-hidden ${darkMode ? 'bg-navy-800' : 'bg-gray-200'}`}>
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-sky-400"
+              initial={{ width: 0 }}
+              animate={{ width: `${(profile.xp / profile.xpToNext) * 100}%` }}
+              transition={{ duration: 1 }}
+            />
           </div>
-          <div>
-            <p className="text-lg font-bold font-display">{stats.categories}</p>
-            <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Categories</p>
-          </div>
+          <p className={`text-xs mt-1.5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{profile.xp} / {profile.xpToNext} XP</p>
         </div>
       </motion.div>
 
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-2">
+        <StatCard icon={Zap} value={stats.totalEntries} label="Entries" darkMode={darkMode} />
+        <StatCard icon={Flame} value={stats.longestStreak} label="Streak" darkMode={darkMode} />
+        <StatCard icon={Trophy} value={stats.badgesEarned} label="Badges" darkMode={darkMode} />
+        <StatCard icon={Heart} value={stats.daysTracked} label="Days" darkMode={darkMode} />
+      </div>
+
+      {/* Edit Form */}
       {editing ? (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className={`p-5 rounded-2xl ${darkMode ? 'bg-navy-900 border border-navy-800' : 'bg-white border border-gray-100'} shadow-sm space-y-4`}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className={`p-5 rounded-3xl ${darkMode ? 'glass' : 'glass-light'} space-y-4`}
         >
           <h3 className="font-semibold font-display">Edit Profile</h3>
-          <div>
-            <label className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Name</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full mt-1 px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-sage-300 ${
-                darkMode ? 'bg-navy-800 border-navy-700 text-white' : 'bg-gray-50 border-gray-200'
-              }`}
-            />
+          <InputField label="Name" value={formData.name} onChange={(v) => setFormData({ ...formData, name: v })} darkMode={darkMode} />
+          <div className="grid grid-cols-3 gap-2">
+            <InputField label="Age" type="number" value={formData.age} onChange={(v) => setFormData({ ...formData, age: parseInt(v) })} darkMode={darkMode} />
+            <InputField label="Height" type="number" value={formData.height} onChange={(v) => setFormData({ ...formData, height: parseInt(v) })} darkMode={darkMode} />
+            <InputField label="Weight" type="number" value={formData.weight} onChange={(v) => setFormData({ ...formData, weight: parseInt(v) })} darkMode={darkMode} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Age</label>
-              <input
-                type="number"
-                value={formData.age}
-                onChange={(e) => setFormData({ ...formData, age: parseInt(e.target.value) })}
-                className={`w-full mt-1 px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-sage-300 ${
-                  darkMode ? 'bg-navy-800 border-navy-700 text-white' : 'bg-gray-50 border-gray-200'
-                }`}
-              />
-            </div>
-            <div>
-              <label className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Height (cm)</label>
-              <input
-                type="number"
-                value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) })}
-                className={`w-full mt-1 px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-sage-300 ${
-                  darkMode ? 'bg-navy-800 border-navy-700 text-white' : 'bg-gray-50 border-gray-200'
-                }`}
-              />
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleSave}
-              className="flex-1 py-2.5 rounded-xl font-medium text-white bg-gradient-to-r from-sage-500 to-sage-600 shadow-md"
-            >
-              Save
-            </button>
-            <button
-              onClick={() => { setEditing(false); setFormData(profile); }}
-              className={`flex-1 py-2.5 rounded-xl font-medium ${darkMode ? 'bg-navy-800 text-gray-300' : 'bg-gray-100 text-gray-600'}`}
-            >
-              Cancel
-            </button>
+          <div className="flex gap-2 pt-2">
+            <button onClick={handleSave} className="flex-1 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-emerald-500 to-sky-500 shadow-lg active:scale-[0.97] transition-transform">Save</button>
+            <button onClick={() => setEditing(false)} className={`flex-1 py-3 rounded-xl font-semibold ${darkMode ? 'bg-navy-800 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>Cancel</button>
           </div>
         </motion.div>
       ) : (
-        <div className={`rounded-2xl overflow-hidden ${darkMode ? 'bg-navy-900 border border-navy-800' : 'bg-white border border-gray-100'} shadow-sm`}>
-          <SettingItem
-            icon={User}
-            label="Edit Profile"
-            onClick={() => setEditing(true)}
-            darkMode={darkMode}
-          />
-          <SettingItem
-            icon={darkMode ? Sun : Moon}
-            label={darkMode ? 'Light Mode' : 'Dark Mode'}
-            onClick={toggleDarkMode}
-            darkMode={darkMode}
-            toggle
-            active={darkMode}
-          />
-          <SettingItem icon={Bell} label="Notifications" darkMode={darkMode} />
-          <SettingItem icon={Shield} label="Privacy & Security" darkMode={darkMode} />
-          <SettingItem icon={Download} label="Export Data" onClick={handleExport} darkMode={darkMode} />
-          <SettingItem icon={Heart} label="About VitalFlow" darkMode={darkMode} last />
+        <div className={`rounded-3xl overflow-hidden ${darkMode ? 'glass' : 'glass-light'}`}>
+          <SettingRow icon={User} label="Edit Profile" onClick={() => setEditing(true)} darkMode={darkMode} />
+          <SettingRow icon={darkMode ? Sun : Moon} label="Appearance" value={darkMode ? 'Dark' : 'Light'} onClick={toggleDarkMode} darkMode={darkMode} />
+          <SettingRow icon={Bell} label="Notifications" value="On" darkMode={darkMode} />
+          <SettingRow icon={Shield} label="Privacy" darkMode={darkMode} />
+          <SettingRow icon={Download} label="Export Data" onClick={handleExport} darkMode={darkMode} />
+          <SettingRow icon={Heart} label="About VitalFlow" value="v2.0" darkMode={darkMode} last />
         </div>
       )}
 
-      <div className="text-center pt-4">
-        <p className={`text-xs ${darkMode ? 'text-gray-600' : 'text-gray-400'}`}>
-          VitalFlow v1.0 — Your health, simplified.
-        </p>
+      <div className="pt-2">
+        <button className={`w-full py-3.5 rounded-2xl font-medium text-red-400 ${darkMode ? 'bg-red-500/10' : 'bg-red-50'} active:scale-[0.97] transition-transform`}>
+          Sign Out
+        </button>
       </div>
+
+      <p className={`text-center text-xs pb-4 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`}>
+        VitalFlow v2.0 • Made with obsession for your health
+      </p>
     </div>
   );
 }
 
-function SettingItem({ icon: Icon, label, onClick, darkMode, toggle, active, last }) {
+function StatCard({ icon: Icon, value, label, darkMode }) {
+  return (
+    <div className={`p-3 rounded-2xl text-center ${darkMode ? 'bg-navy-900/50 border border-navy-800/50' : 'bg-white border border-gray-100'}`}>
+      <Icon size={14} className={`mx-auto mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+      <p className="text-lg font-bold font-display">{value}</p>
+      <p className={`text-[9px] ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{label}</p>
+    </div>
+  );
+}
+
+function SettingRow({ icon: Icon, label, value, onClick, darkMode, last }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-5 py-4 text-left transition-colors ${
-        !last ? (darkMode ? 'border-b border-navy-800' : 'border-b border-gray-50') : ''
-      } ${darkMode ? 'hover:bg-navy-800' : 'hover:bg-gray-50'}`}
+      className={`w-full flex items-center gap-3 px-5 py-4 text-left transition-colors active:bg-white/5 ${
+        !last ? (darkMode ? 'border-b border-white/5' : 'border-b border-gray-100') : ''
+      }`}
     >
       <Icon size={18} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
       <span className="flex-1 text-sm font-medium">{label}</span>
-      {toggle ? (
-        <div className={`w-10 h-6 rounded-full p-0.5 transition-colors ${active ? 'bg-sage-500' : 'bg-gray-300'}`}>
-          <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${active ? 'translate-x-4' : ''}`} />
-        </div>
-      ) : (
-        <ChevronRight size={16} className={darkMode ? 'text-gray-600' : 'text-gray-300'} />
-      )}
+      {value && <span className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{value}</span>}
+      <ChevronRight size={14} className={darkMode ? 'text-gray-600' : 'text-gray-300'} />
     </button>
+  );
+}
+
+function InputField({ label, type = 'text', value, onChange, darkMode }) {
+  return (
+    <div>
+      <label className={`text-xs font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`w-full mt-1 px-3.5 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-2 focus:ring-emerald-400/50 transition-all ${
+          darkMode ? 'bg-navy-900 border-navy-800 text-white' : 'bg-white border-gray-200'
+        }`}
+      />
+    </div>
   );
 }
