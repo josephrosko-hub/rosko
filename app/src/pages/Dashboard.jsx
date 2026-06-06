@@ -7,7 +7,7 @@ import StrainGauge from '../components/ui/StrainGauge';
 import MetricPill from '../components/ui/MetricPill';
 
 export default function Dashboard() {
-  const { profile, darkMode, getToday, getRecoveryScore, getStrainScore, getSleepScore, getInsights, setActiveTab } = useHealthStore();
+  const { profile, darkMode, getToday, getRecoveryScore, getStrainScore, getInsights, setActiveTab } = useHealthStore();
 
   const recovery = getToday('recovery');
   const strain = getToday('strain');

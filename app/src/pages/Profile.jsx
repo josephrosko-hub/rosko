@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Moon, Sun, Download, Shield, Bell, ChevronRight, Heart, Zap, Trophy, Flame, LogOut } from 'lucide-react';
+import { User, Moon, Sun, Download, Shield, Bell, ChevronRight, Heart, Zap, Trophy, Flame } from 'lucide-react';
 import { useHealthStore } from '../store/healthStore';
 
 export default function Profile() {

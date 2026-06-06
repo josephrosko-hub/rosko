@@ -2,10 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { startOfDay, subDays, format, differenceInDays } from 'date-fns';
 
-function lerp(a, b, t) {
-  return a + (b - a) * t;
-}
-
 function generateAdvancedData() {
   const entries = [];
   const today = startOfDay(new Date());
@@ -142,7 +138,7 @@ function generateWorkouts(date, strain) {
   if (strain < 10) return [];
   const types = ['Run', 'Strength', 'HIIT', 'Cycling', 'Yoga', 'Swimming', 'Walk', 'CrossFit'];
   const count = strain > 15 ? 2 : 1;
-  return Array.from({ length: count }, (_, i) => ({
+  return Array.from({ length: count }, () => ({
     type: types[Math.floor(Math.random() * types.length)],
     duration: Math.round(20 + Math.random() * 50),
     calories: Math.round(150 + Math.random() * 400),
@@ -240,11 +236,9 @@ export const useHealthStore = create(
 
       getInsights: () => {
         const entries = get().entries;
-        const today = format(new Date(), 'yyyy-MM-dd');
         const last7 = entries.filter((e) => e.date >= format(subDays(new Date(), 7), 'yyyy-MM-dd'));
 
         const avgHRV = last7.filter(e => e.category === 'biometrics').reduce((s, e) => s + e.data.hrv, 0) / Math.max(last7.filter(e => e.category === 'biometrics').length, 1);
-        const avgSleep = last7.filter(e => e.category === 'sleep').reduce((s, e) => s + e.data.totalHours, 0) / Math.max(last7.filter(e => e.category === 'sleep').length, 1);
         const avgStrain = last7.filter(e => e.category === 'strain').reduce((s, e) => s + e.data.score, 0) / Math.max(last7.filter(e => e.category === 'strain').length, 1);
 
         return [

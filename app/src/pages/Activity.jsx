@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { format, subDays } from 'date-fns';
-import { Zap, Flame, Footprints, Clock, TrendingUp, Dumbbell } from 'lucide-react';
+import { format } from 'date-fns';
+import { Flame, Footprints, Clock, TrendingUp, Dumbbell } from 'lucide-react';
 import { AreaChart, Area, XAxis, ResponsiveContainer } from 'recharts';
 import { useHealthStore } from '../store/healthStore';
 
@@ -139,6 +139,7 @@ function MetricBox({ icon: Icon, label, value, sub, color, darkMode }) {
       className={`p-4 rounded-2xl ${darkMode ? 'glass' : 'glass-light'}`}
     >
       <Icon size={16} className={`${color} mb-2`} />
+      <p className={`text-xs font-semibold ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{label}</p>
       <p className="text-xl font-bold font-display">{value}</p>
       <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{sub}</p>
     </motion.div>
