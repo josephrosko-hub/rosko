@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { format, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import { Brain, TrendingUp, AlertTriangle, Trophy, Sparkles, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { LineChart, Line, XAxis, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { XAxis, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { useHealthStore } from '../store/healthStore';
 
 const priorityColors = {

@@ -1,12 +1,10 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Droplets, Flame, Timer, Plus, Check } from 'lucide-react';
+import { Droplets, Timer, Plus, Check } from 'lucide-react';
 import { useHealthStore } from '../store/healthStore';
 
 export default function Nutrition() {
-  const { darkMode, getToday, addEntry } = useHealthStore();
+  const { darkMode, getToday } = useHealthStore();
   const nutrition = getToday('nutrition');
-  const [showFasting, setShowFasting] = useState(false);
 
   const macros = [
     { name: 'Protein', current: nutrition?.data.protein || 0, target: nutrition?.data.proteinTarget || 140, color: '#34d399', unit: 'g' },

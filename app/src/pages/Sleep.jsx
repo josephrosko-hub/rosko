@@ -1,11 +1,10 @@
 import { motion } from 'framer-motion';
-import { format, subDays } from 'date-fns';
-import { Moon, Sunrise, Clock, TrendingUp, AlertCircle } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { format } from 'date-fns';
+import { Moon, Sunrise, Clock, AlertCircle } from 'lucide-react';
+import { XAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useHealthStore } from '../store/healthStore';
 
 const stageColors = { deep: '#6d28d9', rem: '#0ea5e9', light: '#7dd3fc', awake: '#f87171' };
-const stageLabels = { deep: 'Deep', rem: 'REM', light: 'Light', awake: 'Awake' };
 
 export default function Sleep() {
   const { darkMode, getToday, getEntriesByCategory } = useHealthStore();
